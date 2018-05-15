@@ -6,7 +6,7 @@
   <uses-feature android:glEsVersion="0x00020000" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <application android:label="MyFirstGameByUrhoSharp" android:name="android.app.Application" android:allowBackup="true" android:icon="@mipmap/icon" android:debuggable="true">
-    <activity android:icon="@mipmap/icon" android:label="MyFirstGameByUrhoSharp" android:screenOrientation="portrait" android:name="md557e28c1c2329f944cea2479f5c7d7dd5.MainActivity">
+    <activity android:icon="@mipmap/icon" android:label="MyFirstGameByUrhoSharp" android:name="md557e28c1c2329f944cea2479f5c7d7dd5.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
