@@ -121,7 +121,7 @@ namespace MyFirstGameByUrhoSharp
                     //app.pitch = orientation[1];
                     //app.yaw = orientation[2];
                     app.pitch = (Urho.MathHelper.RadiansToDegrees(orientation[1]) + 360) % 360;      // map [-Pi...+Pi] to [0...360]
-                    app.yaw = (Urho.MathHelper.RadiansToDegrees(orientation[2]) + 360) % 360;
+                    app.yaw = (Urho.MathHelper.RadiansToDegrees(orientation[0]) + 360) % 360;
                     Log.Error("pitch=", orientation[1] + "");
                     Log.Error("yaw=", orientation[2] + "");
                     app.cameraNode.Rotation = new Urho.Quaternion(app.pitch, app.yaw, 0);
