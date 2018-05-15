@@ -33,11 +33,9 @@ namespace MyFirstGameByUrhoSharp
 
             mSensorManager = (SensorManager)GetSystemService(Activity.SensorService);
             mAccSensor = mSensorManager.GetDefaultSensor(SensorType.Accelerometer);
-            mMagneticSensor = mSensorManager.GetDefaultSensor(SensorType.MagneticField);
-            mGeomagneticSensor = mSensorManager.GetDefaultSensor(SensorType.GeomagneticRotationVector);
+            mMagneticSensor = mSensorManager.GetDefaultSensor(SensorType.MagneticField);;
             mSensorManager.RegisterListener(this, mAccSensor, SensorDelay.Game);
             mSensorManager.RegisterListener(this, mMagneticSensor, SensorDelay.Game);
-            mSensorManager.RegisterListener(this, mGeomagneticSensor, SensorDelay.Game);
         }
 
         protected override void OnResume()
@@ -120,10 +118,10 @@ namespace MyFirstGameByUrhoSharp
                     float[] orientation = new float[3];
                     SensorManager.GetOrientation(R, orientation);
                     // orientation contains: azimut, pitch and roll
-                    app.pitch = orientation[1];
-                    app.yaw = orientation[2];
-                    //app.pitch = (Urho.MathHelper.RadiansToDegrees(orientation[1]) + 360) % 360;      // map [-Pi...+Pi] to [0...360]
-                    //app.yaw = (Urho.MathHelper.RadiansToDegrees(orientation[2]) + 360) % 360;
+                    //app.pitch = orientation[1];
+                    //app.yaw = orientation[2];
+                    app.pitch = (Urho.MathHelper.RadiansToDegrees(orientation[1]) + 360) % 360;      // map [-Pi...+Pi] to [0...360]
+                    app.yaw = (Urho.MathHelper.RadiansToDegrees(orientation[2]) + 360) % 360;
                     Log.Error("pitch=", orientation[1] + "");
                     Log.Error("yaw=", orientation[2] + "");
                     app.cameraNode.Rotation = new Urho.Quaternion(app.pitch, app.yaw, 0);
