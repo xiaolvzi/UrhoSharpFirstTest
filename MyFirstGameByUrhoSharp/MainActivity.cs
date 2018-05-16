@@ -32,10 +32,10 @@ namespace MyFirstGameByUrhoSharp
 
 
             mSensorManager = (SensorManager)GetSystemService(Activity.SensorService);
-            mAccSensor = mSensorManager.GetDefaultSensor(SensorType.Accelerometer);
-            mMagneticSensor = mSensorManager.GetDefaultSensor(SensorType.MagneticField);;
+            mAccSensor = mSensorManager.GetDefaultSensor(SensorType.GeomagneticRotationVector);
+            //mMagneticSensor = mSensorManager.GetDefaultSensor(SensorType.MagneticField);;
             mSensorManager.RegisterListener(this, mAccSensor, SensorDelay.Game);
-            mSensorManager.RegisterListener(this, mMagneticSensor, SensorDelay.Game);
+           // mSensorManager.RegisterListener(this, mMagneticSensor, SensorDelay.Game);
         }
 
         protected override void OnResume()
@@ -82,55 +82,68 @@ namespace MyFirstGameByUrhoSharp
             base.OnWindowFocusChanged(hasFocus);
         }
 
-        float[] data_acc = new float[3], data_mag = new float[3];
+        float[] data_acc = new float[3], data_mag = new float[3], gravity=new float[3];
         public void OnSensorChanged(SensorEvent e)
         {
-           /* if (e.Sensor.Type == SensorType.GeomagneticRotationVector)
+            if (e.Sensor.Type == SensorType.GeomagneticRotationVector)
             {
-                var rm = new float[9];
-                SensorManager.GetRotationMatrixFromVector(rm, e.Values.ToArray());
-                var ov = new float[3];
-                SensorManager.GetOrientation(rm, ov);
-                app.pitch = (Urho.MathHelper.RadiansToDegrees(ov[1]) + 360) % 360;      // map [-Pi...+Pi] to [0...360]
-                app.yaw = (Urho.MathHelper.RadiansToDegrees(ov[2]) + 360) % 360;
-                Log.Error("pitch=",app.pitch+"");
-                Log.Error("yaw=", app.yaw + "");
-                // map [-Pi/2...+Pi/2] to [0...360]
-                app.cameraNode.Rotation = new Urho.Quaternion(app.pitch, app.yaw, 0);
-
-            }
-            */
-            SensorType type = e.Sensor.Type;
-            if (type == SensorType.Accelerometer) {
-                   data_acc = e.Values.ToArray();
-            }
-            if (type == SensorType.MagneticField) {
-                   data_mag = e.Values.ToArray();
-            }
-            
-            if (data_acc!=null &&data_mag!=null) {
-                float[] R = new float[9];
-                float[] I = new float[9];
-
-                bool success = SensorManager.GetRotationMatrix(R, I, data_acc, data_mag);
-                if (success)
+                var inR = new float[9];
+                SensorManager.GetRotationMatrixFromVector(inR, e.Values.ToArray());
+                var outR = new float[9];
+                // we need to remap cooridante system, since the Y and Z axes will be swapped, when we pick up the device  
+                if (SensorManager.RemapCoordinateSystem(inR, Android.Hardware.Axis.X, Android.Hardware.Axis.Z, outR))
                 {
-                    float[] orientation = new float[3];
-                    SensorManager.GetOrientation(R, orientation);
-                    // orientation contains: azimut, pitch and roll
-                    //app.pitch = orientation[1];
-                    //app.yaw = orientation[2];
-                    app.pitch = (Urho.MathHelper.RadiansToDegrees(orientation[1]) + 360) % 360;      // map [-Pi...+Pi] to [0...360]
-                    app.yaw = (Urho.MathHelper.RadiansToDegrees(orientation[0]) + 360) % 360;
-                    Log.Error("pitch=", orientation[1] + "");
-                    Log.Error("yaw=", orientation[2] + "");
-                    app.cameraNode.Rotation = new Urho.Quaternion(app.pitch, app.yaw, 0);
+                    var ov = new float[3];
+                    SensorManager.GetOrientation(outR, ov);
+                    try
+                    {
+                        app.pitch = (MathHelper.RadiansToDegrees(ov[1]) + 360) % 360;
+                        app.yaw = (MathHelper.RadiansToDegrees(ov[0]) + 360) % 360;
+                        app.cameraNode.Rotation = new Quaternion(app.pitch, app.yaw, 0);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        // while Urho.SimpleApplication is not fully started, the [app] properties are not available 
+                        System.Diagnostics.Trace.WriteLine(ex.Message);
+                    }
                 }
-                
 
-              
-            }
-           
+                /* SensorType type = e.Sensor.Type;
+             if (type == SensorType.Accelerometer) {
+                 data_acc = e.Values.ToArray();
+                 float alpha = 0.8f;
+
+                 gravity[0] = alpha * gravity[0] + (1 - alpha) * data_acc[0];
+                 gravity[1] = alpha * gravity[1] + (1 - alpha) * data_acc[1];
+                 gravity[2] = alpha * gravity[2] + (1 - alpha) * data_acc[2];
+                 data_acc[0] = data_acc[0] - gravity[0];
+                 data_acc[1] = data_acc[1] - gravity[1];
+                 data_acc[2] = data_acc[2] - gravity[2];
+             }
+             if (type == SensorType.MagneticField) {
+                    data_mag = e.Values.ToArray();
+             }
+
+             if (data_acc!=null &&data_mag!=null) {
+                 float[] R = new float[9];
+                 float[] I = new float[9];
+
+                 bool success = SensorManager.GetRotationMatrix(R, I, data_acc, data_mag);
+                 if (success)
+                 {
+                     float[] orientation = new float[3];
+                     SensorManager.GetOrientation(R, orientation);
+                     app.pitch = (Urho.MathHelper.RadiansToDegrees(orientation[1]) + 360) % 360;      // map [-Pi...+Pi] to [0...360]
+                     app.yaw = (Urho.MathHelper.RadiansToDegrees(orientation[0]) + 360) % 360;
+                     Log.Error("pitch=", orientation[1] + "");
+                     Log.Error("yaw=", orientation[0] + "");
+                     app.cameraNode.Rotation = new Urho.Quaternion(app.pitch, app.yaw, 0);
+                 }*/
+
+
+
+             }
+            
             
         }
 

@@ -3,5 +3,6 @@
   <PropertyGroup>
     <SelectedDevice>Google Pixel</SelectedDevice>
     <AndroidDesignerPreferredDevice>Nexus 4</AndroidDesignerPreferredDevice>
+    <DefaultDevice>Android_Accelerated_x86_Nougat</DefaultDevice>
   </PropertyGroup>
 </Project>
